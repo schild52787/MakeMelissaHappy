@@ -50,6 +50,29 @@
             }
         }
 
+        /* Streak Counter */
+        .streak-counter {
+            background: rgba(255, 215, 0, 0.9);
+            color: #333;
+            padding: 15px 25px;
+            border-radius: 50px;
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% {
+                box-shadow: 0 4px 15px rgba(255, 215, 0, 0.5);
+            }
+            50% {
+                box-shadow: 0 4px 25px rgba(255, 215, 0, 0.8);
+            }
+        }
+
         /* Task Selection Screen */
         .main-title {
             font-size: 3em;
@@ -135,6 +158,64 @@
             font-size: 0.6em;
             color: #666;
             margin-top: 5px;
+        }
+
+        /* Custom Task Section */
+        .custom-task-section {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .custom-task-section h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .custom-input-group {
+            margin-bottom: 15px;
+        }
+
+        .custom-input-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .custom-input-group input, .custom-input-group select {
+            width: 100%;
+            padding: 12px;
+            font-size: 1.1em;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            -webkit-user-select: text;
+            user-select: text;
+        }
+
+        .custom-input-group input:focus, .custom-input-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .add-custom-button {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.2em;
+            font-weight: bold;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .add-custom-button:active {
+            transform: scale(0.95);
         }
 
         .big-button {
@@ -386,6 +467,23 @@
             border-left: 5px solid #4CAF50;
         }
 
+        /* Super Reward Screen */
+        .super-reward-title {
+            font-size: 4em;
+            background: linear-gradient(45deg, #FFD700, #FF69B4, #87CEEB);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: rainbow 3s ease infinite;
+        }
+
+        .reward-message {
+            font-size: 1.8em;
+            color: #333;
+            margin: 20px 0;
+            line-height: 1.6;
+        }
+
         /* Responsive Design for iPad */
         @media (max-width: 768px) {
             .main-title {
@@ -424,6 +522,10 @@
 <body>
     <!-- Task Selection Screen -->
     <div id="task-selection" class="screen active">
+        <div class="streak-counter" id="streak-counter">
+            🌟 Streak: <span id="streak-count">0</span>/5 sessions! 🌟
+        </div>
+
         <h1 class="main-title">🌟 Make Mom Happy! 🌟</h1>
         <p class="subtitle">Pick 3 tasks to complete tonight!</p>
 
@@ -446,6 +548,15 @@
             <button class="task-button" data-task="clean-toys" data-time="10">
                 🧸 Clean Up Toys<br><span class="time-label">10 min</span>
             </button>
+            <button class="task-button" data-task="organize-toys" data-time="10">
+                📦 Organize Toys<br><span class="time-label">10 min</span>
+            </button>
+            <button class="task-button" data-task="baxter" data-time="5">
+                🐕 Let Baxter Out<br><span class="time-label">5 min</span>
+            </button>
+            <button class="task-button" data-task="eating" data-time="10">
+                🍽️ Eating Time<br><span class="time-label">10 min</span>
+            </button>
             <button class="task-button" data-task="mom-work" data-time="15">
                 🤫 Mom Work Time<br><span class="time-label">15 min</span>
             </button>
@@ -454,6 +565,9 @@
             </button>
             <button class="task-button" data-task="legos" data-time="20">
                 🧱 Legos Alone<br><span class="time-label">20 min</span>
+            </button>
+            <button class="task-button" data-task="puzzle" data-time="10">
+                🧩 Work on Puzzle<br><span class="time-label">10 min</span>
             </button>
             <button class="task-button" data-task="read-book" data-time="15">
                 📖 Read a Book<br><span class="time-label">15 min</span>
@@ -470,6 +584,35 @@
             <button class="task-button" data-task="wash-face" data-time="5">
                 💧 Wash Face<br><span class="time-label">5 min</span>
             </button>
+        </div>
+
+        <!-- Treat Mommy Section -->
+        <div class="custom-task-section">
+            <h3>💆 Treat Mommy Special!</h3>
+            <div class="custom-input-group">
+                <label>Choose a special treat for mom:</label>
+                <select id="treat-mommy-select">
+                    <option value="">-- Choose --</option>
+                    <option value="calf-massage">💆 Give Mom a Calf Massage (5 min)</option>
+                    <option value="back-scratch">🤚 Give Mom a Back Scratch (5 min)</option>
+                    <option value="foot-rub">🦶 Give Mom a Foot Rub (5 min)</option>
+                </select>
+            </div>
+            <button class="add-custom-button" id="add-treat-button">Add Treat for Mom! 💖</button>
+        </div>
+
+        <!-- Custom Task Section -->
+        <div class="custom-task-section">
+            <h3>✨ Create Your Own Task!</h3>
+            <div class="custom-input-group">
+                <label>Task Name:</label>
+                <input type="text" id="custom-task-name" placeholder="What do you want to do?" maxlength="30">
+            </div>
+            <div class="custom-input-group">
+                <label>Time (minutes):</label>
+                <input type="number" id="custom-task-time" placeholder="How many minutes?" min="1" max="60" value="10">
+            </div>
+            <button class="add-custom-button" id="add-custom-button">Add Custom Task! ✨</button>
         </div>
 
         <button id="start-button" class="big-button" disabled>START! 🚀</button>
@@ -522,6 +665,21 @@
         </div>
     </div>
 
+    <!-- Super Reward Screen -->
+    <div id="super-reward-screen" class="screen">
+        <div class="celebration-content">
+            <h1 class="super-reward-title">🎊 SUPER REWARD! 🎊</h1>
+            <h2 class="victory-subtitle">5 SESSIONS COMPLETE!</h2>
+            <div class="reward-message">
+                🎉 Elle & Luka get a SPECIAL TREAT! 🍬<br>
+                💖 Mom gets 30 MINUTES of alone time! ☕<br><br>
+                <div class="stars">⭐⭐⭐⭐⭐</div>
+                <strong>Amazing job! You're the BEST!</strong>
+            </div>
+            <button id="claim-reward-button" class="big-button">Claim Reward! 🎁</button>
+        </div>
+    </div>
+
     <script>
         // Game State
         let selectedTasks = [];
@@ -530,12 +688,14 @@
         let timeRemaining = 0;
         let isPaused = false;
         let totalTime = 0;
+        let streakCount = 0;
 
         // DOM Elements
         const taskSelectionScreen = document.getElementById('task-selection');
         const timerScreen = document.getElementById('timer-screen');
         const celebrationScreen = document.getElementById('celebration-screen');
         const victoryScreen = document.getElementById('victory-screen');
+        const superRewardScreen = document.getElementById('super-reward-screen');
 
         const taskButtons = document.querySelectorAll('.task-button');
         const startButton = document.getElementById('start-button');
@@ -545,12 +705,124 @@
         const nextTaskButton = document.getElementById('next-task-button');
         const finishButton = document.getElementById('finish-button');
         const playAgainButton = document.getElementById('play-again-button');
+        const claimRewardButton = document.getElementById('claim-reward-button');
+
+        // Custom task elements
+        const customTaskName = document.getElementById('custom-task-name');
+        const customTaskTime = document.getElementById('custom-task-time');
+        const addCustomButton = document.getElementById('add-custom-button');
+        const treatMommySelect = document.getElementById('treat-mommy-select');
+        const addTreatButton = document.getElementById('add-treat-button');
 
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
+            loadStreak();
             setupTaskSelection();
             setupTimerControls();
+            setupCustomTasks();
         });
+
+        function loadStreak() {
+            const saved = localStorage.getItem('momHappyStreak');
+            streakCount = saved ? parseInt(saved) : 0;
+            updateStreakDisplay();
+        }
+
+        function saveStreak() {
+            localStorage.setItem('momHappyStreak', streakCount.toString());
+        }
+
+        function updateStreakDisplay() {
+            document.getElementById('streak-count').textContent = streakCount;
+        }
+
+        function incrementStreak() {
+            streakCount++;
+            saveStreak();
+            updateStreakDisplay();
+
+            if (streakCount >= 5) {
+                return true; // Show super reward
+            }
+            return false;
+        }
+
+        function resetStreak() {
+            streakCount = 0;
+            saveStreak();
+            updateStreakDisplay();
+        }
+
+        function setupCustomTasks() {
+            // Add custom task
+            addCustomButton.addEventListener('click', () => {
+                const taskName = customTaskName.value.trim();
+                const taskTime = parseInt(customTaskTime.value);
+
+                if (!taskName) {
+                    alert('Please enter a task name!');
+                    return;
+                }
+
+                if (!taskTime || taskTime < 1 || taskTime > 60) {
+                    alert('Please enter a time between 1 and 60 minutes!');
+                    return;
+                }
+
+                if (selectedTasks.length >= 3) {
+                    playSound('error');
+                    alert('You already have 3 tasks selected!');
+                    return;
+                }
+
+                selectedTasks.push({
+                    id: 'custom-' + Date.now(),
+                    name: '✨ ' + taskName,
+                    time: taskTime
+                });
+
+                updateSelectedDisplay();
+                playSound('select');
+
+                // Clear inputs
+                customTaskName.value = '';
+                customTaskTime.value = '10';
+            });
+
+            // Add treat mommy task
+            addTreatButton.addEventListener('click', () => {
+                const treatValue = treatMommySelect.value;
+
+                if (!treatValue) {
+                    alert('Please choose a treat for mom!');
+                    return;
+                }
+
+                if (selectedTasks.length >= 3) {
+                    playSound('error');
+                    alert('You already have 3 tasks selected!');
+                    return;
+                }
+
+                const treatNames = {
+                    'calf-massage': '💆 Calf Massage for Mom',
+                    'back-scratch': '🤚 Back Scratch for Mom',
+                    'foot-rub': '🦶 Foot Rub for Mom'
+                };
+
+                selectedTasks.push({
+                    id: 'treat-' + Date.now(),
+                    name: treatNames[treatValue],
+                    time: 5
+                });
+
+                updateSelectedDisplay();
+                playSound('select');
+
+                // Reset dropdown
+                treatMommySelect.value = '';
+            });
+        }
 
         function setupTaskSelection() {
             taskButtons.forEach(button => {
@@ -610,6 +882,10 @@
             nextTaskButton.addEventListener('click', nextTask);
             finishButton.addEventListener('click', showVictory);
             playAgainButton.addEventListener('click', resetGame);
+            claimRewardButton.addEventListener('click', () => {
+                resetStreak();
+                resetGame();
+            });
         }
 
         function startGame() {
@@ -739,8 +1015,17 @@
                 completedList.appendChild(div);
             });
 
-            showScreen(victoryScreen);
-            createFireworks();
+            // Check if we should show super reward
+            const shouldShowSuperReward = incrementStreak();
+
+            if (shouldShowSuperReward) {
+                showScreen(superRewardScreen);
+                createSuperFireworks();
+            } else {
+                showScreen(victoryScreen);
+                createFireworks();
+            }
+
             playSound('victory');
         }
 
@@ -850,6 +1135,53 @@
                         setTimeout(() => particle.remove(), 1000);
                     }
                 }, i * 600);
+            }
+        }
+
+        function createSuperFireworks() {
+            const colors = ['#FFD700', '#FF69B4', '#87CEEB', '#98FB98', '#FFA500', '#FF6347'];
+
+            for (let i = 0; i < 15; i++) {
+                setTimeout(() => {
+                    const x = Math.random() * window.innerWidth;
+                    const y = Math.random() * (window.innerHeight * 0.8);
+
+                    for (let j = 0; j < 30; j++) {
+                        const particle = document.createElement('div');
+                        particle.style.position = 'fixed';
+                        particle.style.width = '12px';
+                        particle.style.height = '12px';
+                        particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                        particle.style.borderRadius = '50%';
+                        particle.style.left = x + 'px';
+                        particle.style.top = y + 'px';
+                        particle.style.pointerEvents = 'none';
+                        particle.style.zIndex = '9999';
+
+                        document.body.appendChild(particle);
+
+                        const angle = (Math.PI * 2 * j) / 30;
+                        const velocity = 150 + Math.random() * 150;
+                        const dx = Math.cos(angle) * velocity;
+                        const dy = Math.sin(angle) * velocity;
+
+                        particle.animate([
+                            {
+                                transform: 'translate(0, 0) scale(1)',
+                                opacity: 1
+                            },
+                            {
+                                transform: `translate(${dx}px, ${dy}px) scale(0)`,
+                                opacity: 0
+                            }
+                        ], {
+                            duration: 1500,
+                            easing: 'cubic-bezier(0, 0.5, 0.5, 1)'
+                        });
+
+                        setTimeout(() => particle.remove(), 1500);
+                    }
+                }, i * 400);
             }
         }
 

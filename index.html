@@ -732,6 +732,21 @@
             </button>
         </div>
 
+        <!-- Mom Reward Pre-Selection -->
+        <div class="reward-section">
+            <h3>💖 Pick Your Reward for Mom!</h3>
+            <p style="margin-bottom: 15px; color: #666;">Choose what you'll do for mom AFTER completing your 3 tasks:</p>
+            <button class="reward-button" data-preselect-reward="calf-massage">
+                💆 Give Mom a Calf Massage (5 min)
+            </button>
+            <button class="reward-button" data-preselect-reward="back-scratch">
+                🤚 Give Mom a Back Scratch (5 min)
+            </button>
+            <button class="reward-button" data-preselect-reward="foot-rub">
+                🦶 Give Mom a Foot Rub (5 min)
+            </button>
+        </div>
+
         <!-- Custom Task Section -->
         <div class="custom-task-section">
             <h3>✨ Create Your Own Task!</h3>
@@ -1097,7 +1112,11 @@
                 container.appendChild(slot);
             }
 
-            startButton.disabled = selectedTasks.length !== 3;
+            updateStartButton();
+        }
+
+        function updateStartButton() {
+            startButton.disabled = !(selectedTasks.length === 3 && selectedMomReward !== null);
         }
 
         function moveTask(index, direction) {
@@ -1195,7 +1214,22 @@
         }
 
         function setupRewards() {
-            // Mom reward selection
+            // Mom reward PRE-selection (during task selection)
+            const preselectRewardButtons = document.querySelectorAll('[data-preselect-reward]');
+            preselectRewardButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    preselectRewardButtons.forEach(b => b.classList.remove('selected'));
+                    button.classList.add('selected');
+                    selectedMomReward = {
+                        id: button.dataset.preselectReward,
+                        name: button.textContent.trim()
+                    };
+                    updateStartButton();
+                    playSound('select');
+                });
+            });
+
+            // Mom reward selection (after tasks complete - kept for flow continuity)
             momRewardButtons.forEach(button => {
                 button.addEventListener('click', () => {
                     momRewardButtons.forEach(b => b.classList.remove('selected'));
@@ -1380,11 +1414,18 @@
         }
 
         function showMomRewardSelection() {
-            selectedMomReward = null;
-            momRewardButtons.forEach(b => b.classList.remove('selected'));
-            startMomRewardButton.disabled = true;
-            showScreen(momRewardScreen);
-            createFireworks();
+            // Since mom reward was pre-selected, skip selection screen and go straight to timer
+            if (selectedMomReward) {
+                startMomRewardTimer();
+                createFireworks();
+            } else {
+                // Fallback if somehow no reward was selected
+                selectedMomReward = null;
+                momRewardButtons.forEach(b => b.classList.remove('selected'));
+                startMomRewardButton.disabled = true;
+                showScreen(momRewardScreen);
+                createFireworks();
+            }
         }
 
         function startMomRewardTimer() {
@@ -1485,6 +1526,7 @@
             if (window.currentMomInterval) clearInterval(window.currentMomInterval);
 
             taskButtons.forEach(button => button.classList.remove('selected'));
+            document.querySelectorAll('[data-preselect-reward]').forEach(b => b.classList.remove('selected'));
             renderSelectedTasks();
 
             showScreen(taskSelectionScreen);

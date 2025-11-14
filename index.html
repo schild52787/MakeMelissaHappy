@@ -108,16 +108,92 @@
         }
 
         .selected-slot {
-            font-size: 1.3em;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 1.2em;
             padding: 15px;
             margin: 10px 0;
             background: #f0f0f0;
             border-radius: 12px;
             font-weight: bold;
+            min-height: 70px;
         }
 
-        .selected-slot span {
+        .selected-slot.has-task {
+            background: #e8f5e9;
+            border: 2px solid #4CAF50;
+        }
+
+        .task-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .task-name {
+            color: #333;
+            font-size: 1.1em;
+        }
+
+        .task-time {
             color: #667eea;
+            font-size: 0.9em;
+            font-weight: normal;
+        }
+
+        .task-placeholder {
+            color: #999;
+            font-style: italic;
+        }
+
+        .reorder-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            margin-left: 10px;
+        }
+
+        .reorder-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            width: 40px;
+            height: 35px;
+            font-size: 1.2em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .reorder-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .reorder-btn:active:not(:disabled) {
+            transform: scale(0.9);
+        }
+
+        .remove-btn {
+            background: #f44336;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            width: 40px;
+            height: 75px;
+            font-size: 1.3em;
+            cursor: pointer;
+            margin-left: 10px;
+            transition: all 0.2s;
+        }
+
+        .remove-btn:active {
+            transform: scale(0.9);
         }
 
         .task-grid {
@@ -280,8 +356,17 @@
             font-size: 2.5em;
             color: white;
             text-align: center;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .current-task-time {
+            font-size: 1.5em;
+            color: #FFD700;
+            text-align: center;
             margin-bottom: 30px;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            font-weight: bold;
         }
 
         .timer-circle {
@@ -529,10 +614,8 @@
         <h1 class="main-title">🌟 Make Mom Happy! 🌟</h1>
         <p class="subtitle">Pick 3 tasks to complete tonight!</p>
 
-        <div class="selected-tasks">
-            <div class="selected-slot">Task 1: <span id="selected-1">Choose...</span></div>
-            <div class="selected-slot">Task 2: <span id="selected-2">Choose...</span></div>
-            <div class="selected-slot">Task 3: <span id="selected-3">Choose...</span></div>
+        <div class="selected-tasks" id="selected-tasks-container">
+            <!-- Tasks will be dynamically rendered here -->
         </div>
 
         <div class="task-grid">
@@ -627,6 +710,7 @@
         </div>
 
         <h2 class="current-task-title" id="current-task-name">Task Name</h2>
+        <p class="current-task-time" id="current-task-time">⏱️ Time: 00 minutes</p>
 
         <div class="timer-circle">
             <svg width="300" height="300">
@@ -720,6 +804,7 @@
             setupTaskSelection();
             setupTimerControls();
             setupCustomTasks();
+            renderSelectedTasks();
         });
 
         function loadStreak() {
@@ -742,7 +827,7 @@
             updateStreakDisplay();
 
             if (streakCount >= 5) {
-                return true; // Show super reward
+                return true;
             }
             return false;
         }
@@ -753,8 +838,99 @@
             updateStreakDisplay();
         }
 
+        function renderSelectedTasks() {
+            const container = document.getElementById('selected-tasks-container');
+            container.innerHTML = '';
+
+            for (let i = 0; i < 3; i++) {
+                const slot = document.createElement('div');
+                slot.className = 'selected-slot';
+
+                if (selectedTasks[i]) {
+                    slot.classList.add('has-task');
+
+                    const taskInfo = document.createElement('div');
+                    taskInfo.className = 'task-info';
+
+                    const taskName = document.createElement('div');
+                    taskName.className = 'task-name';
+                    taskName.textContent = selectedTasks[i].name;
+
+                    const taskTime = document.createElement('div');
+                    taskTime.className = 'task-time';
+                    taskTime.textContent = `⏱️ ${selectedTasks[i].time} minutes`;
+
+                    taskInfo.appendChild(taskName);
+                    taskInfo.appendChild(taskTime);
+                    slot.appendChild(taskInfo);
+
+                    // Reorder buttons
+                    const reorderBtns = document.createElement('div');
+                    reorderBtns.className = 'reorder-buttons';
+
+                    const upBtn = document.createElement('button');
+                    upBtn.className = 'reorder-btn';
+                    upBtn.innerHTML = '▲';
+                    upBtn.disabled = i === 0;
+                    upBtn.onclick = () => moveTask(i, -1);
+
+                    const downBtn = document.createElement('button');
+                    downBtn.className = 'reorder-btn';
+                    downBtn.innerHTML = '▼';
+                    downBtn.disabled = i === 2;
+                    downBtn.onclick = () => moveTask(i, 1);
+
+                    reorderBtns.appendChild(upBtn);
+                    reorderBtns.appendChild(downBtn);
+                    slot.appendChild(reorderBtns);
+
+                    // Remove button
+                    const removeBtn = document.createElement('button');
+                    removeBtn.className = 'remove-btn';
+                    removeBtn.innerHTML = '✖';
+                    removeBtn.onclick = () => removeTask(i);
+                    slot.appendChild(removeBtn);
+                } else {
+                    const placeholder = document.createElement('div');
+                    placeholder.className = 'task-placeholder';
+                    placeholder.textContent = `Task ${i + 1}: Choose a task...`;
+                    slot.appendChild(placeholder);
+                }
+
+                container.appendChild(slot);
+            }
+
+            startButton.disabled = selectedTasks.length !== 3;
+        }
+
+        function moveTask(index, direction) {
+            const newIndex = index + direction;
+            if (newIndex < 0 || newIndex >= selectedTasks.length) return;
+
+            const temp = selectedTasks[index];
+            selectedTasks[index] = selectedTasks[newIndex];
+            selectedTasks[newIndex] = temp;
+
+            renderSelectedTasks();
+            playSound('click');
+        }
+
+        function removeTask(index) {
+            const task = selectedTasks[index];
+            selectedTasks.splice(index, 1);
+
+            // Unselect the task button if it was a preset task
+            taskButtons.forEach(button => {
+                if (button.dataset.task === task.id) {
+                    button.classList.remove('selected');
+                }
+            });
+
+            renderSelectedTasks();
+            playSound('click');
+        }
+
         function setupCustomTasks() {
-            // Add custom task
             addCustomButton.addEventListener('click', () => {
                 const taskName = customTaskName.value.trim();
                 const taskTime = parseInt(customTaskTime.value);
@@ -781,15 +957,13 @@
                     time: taskTime
                 });
 
-                updateSelectedDisplay();
+                renderSelectedTasks();
                 playSound('select');
 
-                // Clear inputs
                 customTaskName.value = '';
                 customTaskTime.value = '10';
             });
 
-            // Add treat mommy task
             addTreatButton.addEventListener('click', () => {
                 const treatValue = treatMommySelect.value;
 
@@ -816,10 +990,9 @@
                     time: 5
                 });
 
-                updateSelectedDisplay();
+                renderSelectedTasks();
                 playSound('select');
 
-                // Reset dropdown
                 treatMommySelect.value = '';
             });
         }
@@ -831,11 +1004,9 @@
                     const taskTime = parseInt(button.dataset.time);
 
                     if (button.classList.contains('selected')) {
-                        // Deselect
                         button.classList.remove('selected');
                         selectedTasks = selectedTasks.filter(t => t.id !== taskId);
                     } else if (selectedTasks.length < 3) {
-                        // Select
                         button.classList.add('selected');
                         selectedTasks.push({
                             id: taskId,
@@ -843,12 +1014,11 @@
                             time: taskTime
                         });
                     } else {
-                        // Maximum 3 tasks
                         playSound('error');
                         return;
                     }
 
-                    updateSelectedDisplay();
+                    renderSelectedTasks();
                     playSound('select');
                 });
             });
@@ -858,21 +1028,6 @@
                     startGame();
                 }
             });
-        }
-
-        function updateSelectedDisplay() {
-            for (let i = 0; i < 3; i++) {
-                const slot = document.getElementById(`selected-${i + 1}`);
-                if (selectedTasks[i]) {
-                    slot.textContent = selectedTasks[i].name;
-                    slot.style.color = '#4CAF50';
-                } else {
-                    slot.textContent = 'Choose...';
-                    slot.style.color = '#999';
-                }
-            }
-
-            startButton.disabled = selectedTasks.length !== 3;
         }
 
         function setupTimerControls() {
@@ -903,6 +1058,7 @@
             isPaused = false;
 
             document.getElementById('current-task-name').textContent = task.name;
+            document.getElementById('current-task-time').textContent = `⏱️ Time: ${task.time} minutes`;
             updateProgressDots();
             updateTimerDisplay();
             startTimer();
@@ -921,7 +1077,7 @@
 
                     if (timeRemaining === 0) {
                         clearInterval(timerInterval);
-                        playSound('complete');
+                        playTriumphantSound();
                         celebrateTask();
                     }
                 }
@@ -970,8 +1126,8 @@
 
         function completeTask() {
             if (timerInterval) clearInterval(timerInterval);
+            playTriumphantSound();
             celebrateTask();
-            playSound('complete');
         }
 
         function celebrateTask() {
@@ -1015,7 +1171,6 @@
                 completedList.appendChild(div);
             });
 
-            // Check if we should show super reward
             const shouldShowSuperReward = incrementStreak();
 
             if (shouldShowSuperReward) {
@@ -1039,7 +1194,7 @@
             if (timerInterval) clearInterval(timerInterval);
 
             taskButtons.forEach(button => button.classList.remove('selected'));
-            updateSelectedDisplay();
+            renderSelectedTasks();
 
             showScreen(taskSelectionScreen);
             playSound('click');
@@ -1249,6 +1404,39 @@
                         oscillator.stop(audioContext.currentTime + 0.15);
                         break;
                 }
+            } catch (e) {
+                console.log('Audio not available');
+            }
+        }
+
+        function playTriumphantSound() {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+                // Triumphant fanfare: C - E - G - C (major chord)
+                const notes = [
+                    { freq: 523.25, start: 0, duration: 0.3 },      // C5
+                    { freq: 659.25, start: 0.15, duration: 0.3 },   // E5
+                    { freq: 783.99, start: 0.3, duration: 0.4 },    // G5
+                    { freq: 1046.50, start: 0.5, duration: 0.6 }    // C6
+                ];
+
+                notes.forEach(note => {
+                    setTimeout(() => {
+                        const osc = audioContext.createOscillator();
+                        const gain = audioContext.createGain();
+
+                        osc.connect(gain);
+                        gain.connect(audioContext.destination);
+
+                        osc.frequency.value = note.freq;
+                        gain.gain.setValueAtTime(0.2, audioContext.currentTime);
+                        gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + note.duration);
+
+                        osc.start();
+                        osc.stop(audioContext.currentTime + note.duration);
+                    }, note.start * 1000);
+                });
             } catch (e) {
                 console.log('Audio not available');
             }

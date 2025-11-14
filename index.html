@@ -73,6 +73,18 @@
             }
         }
 
+        .weekend-treat-tracker {
+            background: rgba(255, 105, 180, 0.9);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 30px;
+            font-size: 1.1em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
         /* Task Selection Screen */
         .main-title {
             font-size: 3em;
@@ -236,6 +248,45 @@
             margin-top: 5px;
         }
 
+        /* Reward Selection Boxes */
+        .reward-section {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .reward-section h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .reward-button {
+            width: 100%;
+            padding: 20px;
+            margin: 10px 0;
+            font-size: 1.3em;
+            font-weight: bold;
+            background: white;
+            border: 3px solid #ddd;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: left;
+        }
+
+        .reward-button:active {
+            transform: scale(0.97);
+        }
+
+        .reward-button.selected {
+            background: #fff3cd;
+            border-color: #FFD700;
+            transform: scale(1.02);
+        }
+
         /* Custom Task Section */
         .custom-task-section {
             background: white;
@@ -315,6 +366,14 @@
         .big-button:disabled {
             background: #cccccc;
             cursor: not-allowed;
+        }
+
+        .big-button.purple {
+            background: linear-gradient(135deg, #9C27B0 0%, #7B1FA2 100%);
+        }
+
+        .big-button.pink {
+            background: linear-gradient(135deg, #E91E63 0%, #C2185B 100%);
         }
 
         /* Timer Screen */
@@ -611,6 +670,10 @@
             🌟 Streak: <span id="streak-count">0</span>/5 sessions! 🌟
         </div>
 
+        <div class="weekend-treat-tracker" id="weekend-treat-tracker" style="display: none;">
+            🎁 Weekend Treat Progress: <span id="weekend-days">0</span>/3 days!
+        </div>
+
         <h1 class="main-title">🌟 Make Mom Happy! 🌟</h1>
         <p class="subtitle">Pick 3 tasks to complete tonight!</p>
 
@@ -669,21 +732,6 @@
             </button>
         </div>
 
-        <!-- Treat Mommy Section -->
-        <div class="custom-task-section">
-            <h3>💆 Treat Mommy Special!</h3>
-            <div class="custom-input-group">
-                <label>Choose a special treat for mom:</label>
-                <select id="treat-mommy-select">
-                    <option value="">-- Choose --</option>
-                    <option value="calf-massage">💆 Give Mom a Calf Massage (5 min)</option>
-                    <option value="back-scratch">🤚 Give Mom a Back Scratch (5 min)</option>
-                    <option value="foot-rub">🦶 Give Mom a Foot Rub (5 min)</option>
-                </select>
-            </div>
-            <button class="add-custom-button" id="add-treat-button">Add Treat for Mom! 💖</button>
-        </div>
-
         <!-- Custom Task Section -->
         <div class="custom-task-section">
             <h3>✨ Create Your Own Task!</h3>
@@ -734,7 +782,76 @@
             <h1 class="celebration-title" id="celebration-message">🎉 Great Job! 🎉</h1>
             <div class="stars">⭐⭐⭐⭐⭐</div>
             <button id="next-task-button" class="big-button">Next Task! →</button>
-            <button id="finish-button" class="big-button" style="display: none;">Show Mom! 💖</button>
+            <button id="finish-button" class="big-button" style="display: none;">All Done! 💖</button>
+        </div>
+    </div>
+
+    <!-- Mom Reward Selection Screen -->
+    <div id="mom-reward-screen" class="screen">
+        <div class="celebration-content">
+            <h1 class="victory-title">🎉 Tasks Complete! 🎉</h1>
+            <h2 class="victory-subtitle">Now Pick Your Reward for Mom!</h2>
+
+            <div class="reward-section">
+                <h3>Choose ONE reward to give mom:</h3>
+                <button class="reward-button" data-reward="calf-massage">
+                    💆 Give Mom a Calf Massage (5 min)
+                </button>
+                <button class="reward-button" data-reward="back-scratch">
+                    🤚 Give Mom a Back Scratch (5 min)
+                </button>
+                <button class="reward-button" data-reward="foot-rub">
+                    🦶 Give Mom a Foot Rub (5 min)
+                </button>
+            </div>
+
+            <button id="start-mom-reward-button" class="big-button purple" disabled>
+                Start Mom's Reward! 💖
+            </button>
+        </div>
+    </div>
+
+    <!-- Mom Reward Timer Screen -->
+    <div id="mom-reward-timer-screen" class="screen">
+        <h2 class="current-task-title" id="mom-reward-name">Mom's Reward</h2>
+        <p class="current-task-time">⏱️ Time: 5 minutes</p>
+
+        <div class="timer-circle">
+            <svg width="300" height="300">
+                <circle cx="150" cy="150" r="140" class="timer-bg"></circle>
+                <circle cx="150" cy="150" r="140" class="timer-progress" id="mom-timer-progress"></circle>
+            </svg>
+            <div class="timer-text" id="mom-timer-display">05:00</div>
+        </div>
+
+        <button id="mom-reward-done-button" class="big-button purple">✅ Mom's Happy!</button>
+    </div>
+
+    <!-- Kid Reward Selection Screen -->
+    <div id="kid-reward-screen" class="screen">
+        <div class="celebration-content">
+            <h1 class="victory-title">🏆 Amazing Work! 🏆</h1>
+            <h2 class="victory-subtitle">Now Pick YOUR Reward!</h2>
+
+            <div class="reward-section">
+                <h3>Choose YOUR reward:</h3>
+                <button class="reward-button" data-kid-reward="read-book">
+                    📖 Read a Book
+                </button>
+                <button class="reward-button" data-kid-reward="ipad-car">
+                    📱 iPad in Car Tomorrow Morning
+                </button>
+                <button class="reward-button" data-kid-reward="mom-lays">
+                    🛏️ Mom Lays With Us Tonight
+                </button>
+                <button class="reward-button" data-kid-reward="weekend-treat">
+                    🎁 Complete 3 Days for Weekend Treat
+                </button>
+            </div>
+
+            <button id="claim-kid-reward-button" class="big-button pink" disabled>
+                Claim My Reward! 🎉
+            </button>
         </div>
     </div>
 
@@ -745,22 +862,23 @@
             <h2 class="victory-subtitle">MOM IS SO HAPPY!</h2>
             <div class="hearts">💖 💖 💖 💖 💖</div>
             <div class="completed-list" id="completed-list"></div>
+            <div id="reward-summary" style="margin: 20px 0; font-size: 1.2em;"></div>
             <button id="play-again-button" class="big-button">Play Again! 🔄</button>
         </div>
     </div>
 
-    <!-- Super Reward Screen -->
-    <div id="super-reward-screen" class="screen">
+    <!-- Weekend Treat Unlocked Screen -->
+    <div id="weekend-treat-screen" class="screen">
         <div class="celebration-content">
-            <h1 class="super-reward-title">🎊 SUPER REWARD! 🎊</h1>
-            <h2 class="victory-subtitle">5 SESSIONS COMPLETE!</h2>
+            <h1 class="super-reward-title">🎊 WEEKEND TREAT UNLOCKED! 🎊</h1>
+            <h2 class="victory-subtitle">3 DAYS COMPLETE!</h2>
             <div class="reward-message">
-                🎉 Elle & Luka get a SPECIAL TREAT! 🍬<br>
-                💖 Mom gets 30 MINUTES of alone time! ☕<br><br>
+                🎉 Elle & Luka completed 3 days in a row! 🎉<br>
+                💖 You earned your WEEKEND TREAT! 🎁<br><br>
                 <div class="stars">⭐⭐⭐⭐⭐</div>
                 <strong>Amazing job! You're the BEST!</strong>
             </div>
-            <button id="claim-reward-button" class="big-button">Claim Reward! 🎁</button>
+            <button id="claim-weekend-button" class="big-button">Start Fresh Week! 🔄</button>
         </div>
     </div>
 
@@ -773,13 +891,20 @@
         let isPaused = false;
         let totalTime = 0;
         let streakCount = 0;
+        let selectedMomReward = null;
+        let selectedKidReward = null;
+        let weekendTreatDays = 0;
+        let weekendTreatActive = false;
 
         // DOM Elements
         const taskSelectionScreen = document.getElementById('task-selection');
         const timerScreen = document.getElementById('timer-screen');
         const celebrationScreen = document.getElementById('celebration-screen');
+        const momRewardScreen = document.getElementById('mom-reward-screen');
+        const momRewardTimerScreen = document.getElementById('mom-reward-timer-screen');
+        const kidRewardScreen = document.getElementById('kid-reward-screen');
         const victoryScreen = document.getElementById('victory-screen');
-        const superRewardScreen = document.getElementById('super-reward-screen');
+        const weekendTreatScreen = document.getElementById('weekend-treat-screen');
 
         const taskButtons = document.querySelectorAll('.task-button');
         const startButton = document.getElementById('start-button');
@@ -789,21 +914,28 @@
         const nextTaskButton = document.getElementById('next-task-button');
         const finishButton = document.getElementById('finish-button');
         const playAgainButton = document.getElementById('play-again-button');
-        const claimRewardButton = document.getElementById('claim-reward-button');
 
         // Custom task elements
         const customTaskName = document.getElementById('custom-task-name');
         const customTaskTime = document.getElementById('custom-task-time');
         const addCustomButton = document.getElementById('add-custom-button');
-        const treatMommySelect = document.getElementById('treat-mommy-select');
-        const addTreatButton = document.getElementById('add-treat-button');
+
+        // Reward elements
+        const momRewardButtons = document.querySelectorAll('[data-reward]');
+        const startMomRewardButton = document.getElementById('start-mom-reward-button');
+        const momRewardDoneButton = document.getElementById('mom-reward-done-button');
+        const kidRewardButtons = document.querySelectorAll('[data-kid-reward]');
+        const claimKidRewardButton = document.getElementById('claim-kid-reward-button');
+        const claimWeekendButton = document.getElementById('claim-weekend-button');
 
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
             loadStreak();
+            loadWeekendTreatProgress();
             setupTaskSelection();
             setupTimerControls();
             setupCustomTasks();
+            setupRewards();
             renderSelectedTasks();
         });
 
@@ -836,6 +968,71 @@
             streakCount = 0;
             saveStreak();
             updateStreakDisplay();
+        }
+
+        function loadWeekendTreatProgress() {
+            const saved = localStorage.getItem('weekendTreatDays');
+            const active = localStorage.getItem('weekendTreatActive');
+            const lastDate = localStorage.getItem('weekendTreatLastDate');
+            const today = new Date().toDateString();
+
+            weekendTreatDays = saved ? parseInt(saved) : 0;
+            weekendTreatActive = active === 'true';
+
+            // Reset if it's a new day and not continuous
+            if (lastDate && lastDate !== today && !checkConsecutiveDay(lastDate)) {
+                weekendTreatDays = 0;
+                weekendTreatActive = false;
+                saveWeekendTreatProgress();
+            }
+
+            updateWeekendTreatDisplay();
+        }
+
+        function checkConsecutiveDay(lastDateStr) {
+            const lastDate = new Date(lastDateStr);
+            const today = new Date();
+            const diffTime = today - lastDate;
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            return diffDays === 1;
+        }
+
+        function saveWeekendTreatProgress() {
+            localStorage.setItem('weekendTreatDays', weekendTreatDays.toString());
+            localStorage.setItem('weekendTreatActive', weekendTreatActive.toString());
+            localStorage.setItem('weekendTreatLastDate', new Date().toDateString());
+        }
+
+        function updateWeekendTreatDisplay() {
+            const tracker = document.getElementById('weekend-treat-tracker');
+            const daysSpan = document.getElementById('weekend-days');
+
+            if (weekendTreatActive && weekendTreatDays < 3) {
+                tracker.style.display = 'block';
+                daysSpan.textContent = weekendTreatDays;
+            } else {
+                tracker.style.display = 'none';
+            }
+        }
+
+        function incrementWeekendTreat() {
+            if (weekendTreatActive) {
+                weekendTreatDays++;
+                saveWeekendTreatProgress();
+                updateWeekendTreatDisplay();
+
+                if (weekendTreatDays >= 3) {
+                    return true; // Show weekend treat screen
+                }
+            }
+            return false;
+        }
+
+        function resetWeekendTreat() {
+            weekendTreatDays = 0;
+            weekendTreatActive = false;
+            saveWeekendTreatProgress();
+            updateWeekendTreatDisplay();
         }
 
         function renderSelectedTasks() {
@@ -919,7 +1116,6 @@
             const task = selectedTasks[index];
             selectedTasks.splice(index, 1);
 
-            // Unselect the task button if it was a preset task
             taskButtons.forEach(button => {
                 if (button.dataset.task === task.id) {
                     button.classList.remove('selected');
@@ -963,38 +1159,6 @@
                 customTaskName.value = '';
                 customTaskTime.value = '10';
             });
-
-            addTreatButton.addEventListener('click', () => {
-                const treatValue = treatMommySelect.value;
-
-                if (!treatValue) {
-                    alert('Please choose a treat for mom!');
-                    return;
-                }
-
-                if (selectedTasks.length >= 3) {
-                    playSound('error');
-                    alert('You already have 3 tasks selected!');
-                    return;
-                }
-
-                const treatNames = {
-                    'calf-massage': '💆 Calf Massage for Mom',
-                    'back-scratch': '🤚 Back Scratch for Mom',
-                    'foot-rub': '🦶 Foot Rub for Mom'
-                };
-
-                selectedTasks.push({
-                    id: 'treat-' + Date.now(),
-                    name: treatNames[treatValue],
-                    time: 5
-                });
-
-                renderSelectedTasks();
-                playSound('select');
-
-                treatMommySelect.value = '';
-            });
         }
 
         function setupTaskSelection() {
@@ -1030,17 +1194,71 @@
             });
         }
 
+        function setupRewards() {
+            // Mom reward selection
+            momRewardButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    momRewardButtons.forEach(b => b.classList.remove('selected'));
+                    button.classList.add('selected');
+                    selectedMomReward = {
+                        id: button.dataset.reward,
+                        name: button.textContent.trim()
+                    };
+                    startMomRewardButton.disabled = false;
+                    playSound('select');
+                });
+            });
+
+            startMomRewardButton.addEventListener('click', () => {
+                if (selectedMomReward) {
+                    startMomRewardTimer();
+                }
+            });
+
+            momRewardDoneButton.addEventListener('click', () => {
+                completeMomReward();
+            });
+
+            // Kid reward selection
+            kidRewardButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    kidRewardButtons.forEach(b => b.classList.remove('selected'));
+                    button.classList.add('selected');
+                    selectedKidReward = {
+                        id: button.dataset.kidReward,
+                        name: button.textContent.trim()
+                    };
+
+                    // If weekend treat is selected, activate tracking
+                    if (selectedKidReward.id === 'weekend-treat') {
+                        weekendTreatActive = true;
+                    }
+
+                    claimKidRewardButton.disabled = false;
+                    playSound('select');
+                });
+            });
+
+            claimKidRewardButton.addEventListener('click', () => {
+                if (selectedKidReward) {
+                    completeKidReward();
+                }
+            });
+
+            claimWeekendButton.addEventListener('click', () => {
+                resetWeekendTreat();
+                resetGame();
+            });
+
+            playAgainButton.addEventListener('click', resetGame);
+        }
+
         function setupTimerControls() {
             pauseButton.addEventListener('click', togglePause);
             resetButton.addEventListener('click', resetTimer);
             doneButton.addEventListener('click', completeTask);
             nextTaskButton.addEventListener('click', nextTask);
-            finishButton.addEventListener('click', showVictory);
-            playAgainButton.addEventListener('click', resetGame);
-            claimRewardButton.addEventListener('click', () => {
-                resetStreak();
-                resetGame();
-            });
+            finishButton.addEventListener('click', showMomRewardSelection);
         }
 
         function startGame() {
@@ -1161,7 +1379,78 @@
             playSound('start');
         }
 
-        function showVictory() {
+        function showMomRewardSelection() {
+            selectedMomReward = null;
+            momRewardButtons.forEach(b => b.classList.remove('selected'));
+            startMomRewardButton.disabled = true;
+            showScreen(momRewardScreen);
+            createFireworks();
+        }
+
+        function startMomRewardTimer() {
+            document.getElementById('mom-reward-name').textContent = selectedMomReward.name;
+            showScreen(momRewardTimerScreen);
+
+            let momTimeRemaining = 300; // 5 minutes
+            const momTimerDisplay = document.getElementById('mom-timer-display');
+            const momTimerProgress = document.getElementById('mom-timer-progress');
+
+            const updateMomTimer = () => {
+                const minutes = Math.floor(momTimeRemaining / 60);
+                const seconds = momTimeRemaining % 60;
+                momTimerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+                const progress = (300 - momTimeRemaining) / 300;
+                const circumference = 2 * Math.PI * 140;
+                const offset = circumference - (progress * circumference);
+                momTimerProgress.style.strokeDashoffset = offset;
+            };
+
+            updateMomTimer();
+
+            const momInterval = setInterval(() => {
+                if (momTimeRemaining > 0) {
+                    momTimeRemaining--;
+                    updateMomTimer();
+                } else {
+                    clearInterval(momInterval);
+                    playTriumphantSound();
+                }
+            }, 1000);
+
+            window.currentMomInterval = momInterval;
+        }
+
+        function completeMomReward() {
+            if (window.currentMomInterval) {
+                clearInterval(window.currentMomInterval);
+            }
+            playTriumphantSound();
+            showKidRewardSelection();
+        }
+
+        function showKidRewardSelection() {
+            selectedKidReward = null;
+            kidRewardButtons.forEach(b => b.classList.remove('selected'));
+            claimKidRewardButton.disabled = false;
+            showScreen(kidRewardScreen);
+            createConfetti();
+        }
+
+        function completeKidReward() {
+            // Check if weekend treat should be unlocked
+            const shouldShowWeekendTreat = incrementWeekendTreat();
+
+            if (shouldShowWeekendTreat) {
+                showScreen(weekendTreatScreen);
+                createSuperFireworks();
+                playSound('victory');
+            } else {
+                showFinalVictory();
+            }
+        }
+
+        function showFinalVictory() {
             const completedList = document.getElementById('completed-list');
             completedList.innerHTML = '';
 
@@ -1171,16 +1460,15 @@
                 completedList.appendChild(div);
             });
 
-            const shouldShowSuperReward = incrementStreak();
+            const rewardSummary = document.getElementById('reward-summary');
+            rewardSummary.innerHTML = `
+                <strong>Mom's Reward:</strong> ${selectedMomReward.name}<br>
+                <strong>Your Reward:</strong> ${selectedKidReward.name}
+            `;
 
-            if (shouldShowSuperReward) {
-                showScreen(superRewardScreen);
-                createSuperFireworks();
-            } else {
-                showScreen(victoryScreen);
-                createFireworks();
-            }
-
+            incrementStreak();
+            showScreen(victoryScreen);
+            createFireworks();
             playSound('victory');
         }
 
@@ -1190,8 +1478,11 @@
             timeRemaining = 0;
             totalTime = 0;
             isPaused = false;
+            selectedMomReward = null;
+            selectedKidReward = null;
 
             if (timerInterval) clearInterval(timerInterval);
+            if (window.currentMomInterval) clearInterval(window.currentMomInterval);
 
             taskButtons.forEach(button => button.classList.remove('selected'));
             renderSelectedTasks();
@@ -1413,12 +1704,11 @@
             try {
                 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
-                // Triumphant fanfare: C - E - G - C (major chord)
                 const notes = [
-                    { freq: 523.25, start: 0, duration: 0.3 },      // C5
-                    { freq: 659.25, start: 0.15, duration: 0.3 },   // E5
-                    { freq: 783.99, start: 0.3, duration: 0.4 },    // G5
-                    { freq: 1046.50, start: 0.5, duration: 0.6 }    // C6
+                    { freq: 523.25, start: 0, duration: 0.3 },
+                    { freq: 659.25, start: 0.15, duration: 0.3 },
+                    { freq: 783.99, start: 0.3, duration: 0.4 },
+                    { freq: 1046.50, start: 0.5, duration: 0.6 }
                 ];
 
                 notes.forEach(note => {
